@@ -86,14 +86,43 @@ strClone:
 
 ; void strDelete(char* a)
 strDelete:
-	ret
+	jmp free
+	;! jmp free solamente funciona, ¿por qué? 
+	;  Porque el rip ya esta escrito en el stack para que en el momento
+	;  En que "free" haga "ret", vuela al caller de esta funcion
 
 ; void strPrint(char* a, FILE* pFile)
 strPrint:
+	push rbp
+	mov rbp, rsp
+	; fprintf tiene (FILE*, char*) como argumentos, los doy vuelta.
+
+	mov rdx, rsi ;temporalmente muevo el FILE* a rdx
+	mov rsi, rdi ;muevo el char* a rsi
+	mov rdi, rdx ;muevo el FILE* a rdi para que se posicione bien
+	call fprintf
+
+	mov rsp, rbp
+	pop rbp
 	ret
 
 ; uint32_t strLen(char* a)
 strLen:
-	ret
+	push rbp
+	mov rbp, rsp
 
+	xor r8,r8
+	.loop_len:
+		mov al, [rdi]
+		cmp al, 0
+		je .end_len
+		inc rdi
+		inc r8
+		jmp .loop_len
+	.end_len:
+		mov rax, r8
+
+		mov rsp, rbp 
+		pop rbp
+		ret
 
