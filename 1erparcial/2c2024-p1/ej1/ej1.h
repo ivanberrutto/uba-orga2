@@ -12,10 +12,10 @@
  *                  la durabilidad llega a 0.
  */
 typedef struct {
-	char nombre[18]; 		//asmdef_offset:ITEM_NOMBRE
-	uint32_t fuerza;		//asmdef_offset:ITEM_FUERZA
-	uint16_t durabilidad;	//asmdef_offset:ITEM_DURABILIDAD
-} item_t; //asmdef_size:ITEM_SIZE
+	char nombre[18]; 		//asmdef_offset:ITEM_NOMBRE 18 0
+	uint32_t fuerza;		//asmdef_offset:ITEM_FUERZA 4 20
+	uint16_t durabilidad;	//asmdef_offset:ITEM_DURABILIDAD 2 24
+} item_t; //asmdef_size:ITEM_SIZE 32
 
 /**
  * El tipo de las funciones que se utilizan para comparar ítems.

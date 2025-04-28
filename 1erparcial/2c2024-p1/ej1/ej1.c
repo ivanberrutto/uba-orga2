@@ -30,8 +30,10 @@ bool es_indice_ordenado(item_t** inventario, uint16_t* indice, uint16_t tamanio,
 /**
  * OPCIONAL: implementar en C
  */
-item_t** indice_a_inventario(item_t** inventario, uint16_t* indice, uint16_t tamanio) {
+
+ item_t** indice_a_inventario(item_t** inventario, uint16_t* indice, uint16_t tamanio) {
 	// ¿Cuánta memoria hay que pedir para el resultado?
 	item_t** resultado;
 	return resultado;
 }
+

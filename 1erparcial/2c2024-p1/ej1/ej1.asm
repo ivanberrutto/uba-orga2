@@ -2,7 +2,6 @@ extern malloc
 
 section .rodata
 ; Acá se pueden poner todas las máscaras y datos que necesiten para el ejercicio
-
 section .text
 ; Marca un ejercicio como aún no completado (esto hace que no corran sus tests)
 FALSE EQU 0
@@ -14,22 +13,23 @@ TRUE  EQU 1
 ; Funciones a implementar:
 ;   - es_indice_ordenado
 global EJERCICIO_1A_HECHO
-EJERCICIO_1A_HECHO: db FALSE ; Cambiar por `TRUE` para correr los tests.
+EJERCICIO_1A_HECHO: db TRUE ; Cambiar por `TRUE` para correr los tests.
 
 ; Marca el ejercicio 1B como hecho (`true`) o pendiente (`false`).
 ;
 ; Funciones a implementar:
 ;   - indice_a_inventario
+
+
 global EJERCICIO_1B_HECHO
-EJERCICIO_1B_HECHO: db FALSE ; Cambiar por `TRUE` para correr los tests.
+EJERCICIO_1B_HECHO: db TRUE ; Cambiar por `TRUE` para correr los tests.
 
 ;########### ESTOS SON LOS OFFSETS Y TAMAÑO DE LOS STRUCTS
 ; Completar las definiciones (serán revisadas por ABI enforcer):
-ITEM_NOMBRE EQU ??
-ITEM_FUERZA EQU ??
-ITEM_DURABILIDAD EQU ??
-ITEM_SIZE EQU ??
-
+ITEM_NOMBRE EQU 0
+ITEM_FUERZA EQU 20
+ITEM_DURABILIDAD EQU 32
+ITEM_SIZE EQU 2
 ;; La funcion debe verificar si una vista del inventario está correctamente 
 ;; ordenada de acuerdo a un criterio (comparador)
 
@@ -54,7 +54,6 @@ ITEM_SIZE EQU ??
 ;;   de verificar que el orden sea estable.
 
 global es_indice_ordenado
-es_indice_ordenado:
 	; Te recomendamos llenar una tablita acá con cada parámetro y su
 	; ubicación según la convención de llamada. Prestá atención a qué
 	; valores son de 64 bits y qué valores son de 32 bits o 8 bits.
@@ -63,7 +62,60 @@ es_indice_ordenado:
 	; r/m64 = uint16_t*    indice
 	; r/m16 = uint16_t     tamanio
 	; r/m64 = comparador_t comparador
-		ret
+
+; bool es_indice_ordenado(item_t** inventario rdi,
+;                         uint16_t* indice rsi , 
+;						  uint16_t tamanio rdx , 
+;						  comparador_t (item_t*,item_t*) comparador rcx) ;
+;
+es_indice_ordenado:
+	push rbp
+	mov rbp, rsp
+	sub rsp , 16 
+	push r12
+	push r13
+	push r14
+	push r15
+
+	mov r12,rdi ; aca guardo el puntero del inventario
+	mov r13,rsi ; aca guardo el puntero del indice
+	xor r14,r14 ; uso de contador
+	mov [rbp-8] , rcx
+
+	mov r15w , dx ; guardo hasta donde tengo que ir
+	sub r15 , 1
+	.loop:
+		cmp r14w, r15w
+		je .end
+		xor r8, r8 ; limpio r8 para hacer calculo temporal donde guardo cuanto tengo que mover el indice
+		mov r8w, word [r13+r14*2]
+
+		;imul r8w , ITEM_SIZE ; veo cuanto me tengo que mover
+		mov rdi , qword [r12+r8*8]
+
+		;calculo el otro
+				xor r8,r8
+		mov r8w, word [ 2+r13+r14*2]
+		;imul r8w , ITEM_SIZE
+		mov rsi , qword[r12+r8*8]
+
+		call [rbp-8]
+		cmp rax , 0
+		je  .end
+		mov rax , 1
+		add r14, 1 
+		jmp .loop
+
+	.end:
+
+	pop r15
+	pop r14
+	pop r13
+	pop r12
+	add rsp,16
+	pop rbp
+	ret
+
 
 ;; Dado un inventario y una vista, crear un nuevo inventario que mantenga el
 ;; orden descrito por la misma.
@@ -91,7 +143,44 @@ indice_a_inventario:
 	; ubicación según la convención de llamada. Prestá atención a qué
 	; valores son de 64 bits y qué valores son de 32 bits o 8 bits.
 	;
-	; r/m64 = item_t**  inventario
-	; r/m64 = uint16_t* indice
-	; r/m16 = uint16_t  tamanio
+	; r/m64 = item_t**  inventario rdi
+	; r/m64 = uint16_t* indice rsi
+	; r/m16 = uint16_t  tamanio dx 
+	push rbp
+	mov rbp, rsp
+	sub rsp , 16 
+	push r12
+	push r13
+	push r14
+	push r15
+
+	mov r12,rdi ; aca guardo el puntero del inventario
+	mov r13,rsi ; aca guardo el puntero del indice
+	xor r14,r14 ; uso de contador	
+	mov r15w , dx ; guardo hasta donde tengo que ir
+	;sub r15 , 1
+	xor rdi,rdi
+	mov di , dx
+	call malloc 
+	mov rdi,rax ; guardo mi puntero en rdi
+	.loop:
+		cmp r14w, r15w
+		je .end
+		xor r8, r8 ; limpio r8 para hacer calculo temporal donde guardo cuanto tengo que mover el indice
+		mov r8w, word [r13+r14*2]
+		mov rsi , qword [r12+r8*8] ; uso rsi de intermediario
+		;imul r8w , ITEM_SIZE ; veo cuanto me tengo que mover
+		mov qword [rdi] , rsi
+		add rdi , 8
+		add r14, 1 
+		jmp .loop
+
+	.end:
+	
+	pop r15
+	pop r14
+	pop r13
+	pop r12
+	add rsp,16
+	pop rbp
 	ret
