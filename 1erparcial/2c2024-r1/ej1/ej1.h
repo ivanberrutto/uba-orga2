@@ -11,8 +11,8 @@
  *   - references:     La cantidad de referencias a la unidad en el mapa.
  */
 typedef struct {
-	char clase[11];       //asmdef_offset:ATTACKUNIT_CLASE
-	uint16_t combustible; //asmdef_offset:ATTACKUNIT_COMBUSTIBLE
+	char clase[11];       //asmdef_offset:ATTACKUNIT_CLASE 0 11
+	uint16_t combustible; //asmdef_offset:ATTACKUNIT_COMBUSTIBLE 
 	uint8_t references;   //asmdef_offset:ATTACKUNIT_REFERENCES
 } attackunit_t; //asmdef_size:ATTACKUNIT_SIZE
 
@@ -31,7 +31,7 @@ extern bool EJERCICIO_1A_HECHO;
  *
  * Funciones a implementar:
  *   - contarCombustibleAsignado
- */
+ **/
 extern bool EJERCICIO_1B_HECHO;
 
 /**
