@@ -1,0 +1,10 @@
+https://www.cs.uaf.edu/2017/fall/cs301/reference/x86_64.html
+
+registros donde vienen los parametros:
+ x1[rdi], x2[rsi], x3[rdx], x4[rcx], x5[r8], x6[r9], x7[stack(rbp+16)], x8[stack (rbp+16+8)] 
+ 
+Si Volatiles:	rax, rcx, rdx, rsi, rdi, r8–r11, xmm0–xmm15 ( Las funciones desconocidas pueden modificar su valor, no tengo que restaurar su valor anterior )
+ 
+No volatiles:	rbx, rsp, rbp, r12–r15 ( Las funciones desconocidas no lo modifican pero tengo que restaurar su valor si las uso )	
+
+para char usar la parte low de 1 byte : ej rax : al

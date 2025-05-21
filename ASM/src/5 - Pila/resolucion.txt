@@ -1,0 +1,10 @@
+la clave es: "clave_192.168.100.196"
+
+paso a paso de como lo hice:
+1. Use info functions en gdb
+2. Use dissasemble print_authentication_message
+3. Use breakpoint antes de la operacion b *print_authentication_message+15
+4. Hice backtrace para encontrar las otras funciones
+5. utilice dissasemble en do_some_more_stuff
+6. Puse un breakpoint cuando estaba por comparar la entrada con la clave real en rsi
+7. use x/s $rsi y consegui la clave

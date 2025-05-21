@@ -1,5 +1,5 @@
 extern malloc
-
+extern free
 section .rodata
 ; Acá se pueden poner todas las máscaras y datos que necesiten para el ejercicio
 
@@ -43,7 +43,7 @@ optimizar:
 	; ubicación según la convención de llamada. Prestá atención a qué
 	; valores son de 64 bits y qué valores son de 32 bits o 8 bits.
 	;
-	; r/m64 = mapa_t           mapa rdi EL MAPA ES 5*5
+	; r/m64 = mapa_t           mapa rdi EL MAPA ES 255*255
 	; r/m64 = attackunit_t*    compartida rsi
 	; r/m64 = uint32_t*        fun_hash(attackunit_t*) rdx
 	push rbp
@@ -68,7 +68,7 @@ optimizar:
 	mov [rbp-8] , eax ; este es el hash a comparar
 	
 	.loop:
-		cmp r14, 65026
+		cmp r14, 65025
 		je .end
 		mov rdi , qword [r12 + r14 * 8 ] ; voy hacia la pos del mapa actual
 		cmp rdi , 0
@@ -83,9 +83,9 @@ optimizar:
 		mov rdi , [r12 + r14 * 8 ] ; vuelvo a la pos actual en el mapa
 		sub byte [rdi+ATTACKUNIT_REFERENCES] , 1 ; le resto la referencia
 		cmp  byte [rdi+ATTACKUNIT_REFERENCES] , 0 ; si es 0 tengo que liberarlo
-		je .dontFree
+		;je .dontFree
 		;call free ; libero el puntero de lo que habia antes
-		.dontFree:
+		;.dontFree:
 		mov [r12+r14 * 8] , r13 ; pongo en el mapa el puntero a mi attack unit 
 		.next:
 		add r14, 1 
